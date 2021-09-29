@@ -45,7 +45,7 @@ ADC_HandleTypeDef hadc1;
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
-
+uint16_t AD_RES = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -69,7 +69,7 @@ static void MX_TIM2_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  uint16_t AD_RES = 0;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -103,11 +103,8 @@ int main(void)
   while (1)
   {
     // Start ADC Conversion
-    HAL_ADC_Start(&hadc1);
-    // Poll ADC1 Perihperal & TimeOut = 1mSec
-    HAL_ADC_PollForConversion(&hadc1, 1);
-    // Read The ADC Conversion Result & Map It To PWM DutyCycle
-    AD_RES = HAL_ADC_GetValue(&hadc1);
+    HAL_ADC_Start_IT(&hadc1);
+    // Update The PWM Duty Cycle With Latest ADC Conversion Result
     TIM2->CCR1 = (AD_RES<<4);
     HAL_Delay(1);
     /* USER CODE END WHILE */
@@ -281,7 +278,11 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+{
+    // Read & Update The ADC Result
+    AD_RES = HAL_ADC_GetValue(&hadc1);
+}
 /* USER CODE END 4 */
 
 /**
