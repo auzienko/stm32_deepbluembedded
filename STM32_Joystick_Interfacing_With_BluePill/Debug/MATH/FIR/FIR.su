@@ -1,0 +1,2 @@
+FIR.c:16:6:AVG_FIR_LPF	32	static
+FIR.c:38:6:SUM_BUFFER	32	static
